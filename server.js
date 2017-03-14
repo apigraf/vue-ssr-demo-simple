@@ -1,51 +1,54 @@
-'use strict'
+'use strict';
 
-var fs = require('fs')
-var path = require('path')
+var fs = require('fs');
+var path = require('path');
 
-// Define global Vue for server-side app.js
-global.Vue = require('vue')
+// Получаем доступ к Vue глобально для серверной версии app.js
+global.Vue = require('vue');
 
-// Get the HTML layout
-var layout = fs.readFileSync('./index.html', 'utf8')
+// Получаем HTML-шаблон
+var layout = fs.readFileSync('./index.html', 'utf8');
 
-// Create a renderer
-var renderer = require('vue-server-renderer').createRenderer()
+// Создаём рендерер
+var renderer = require('vue-server-renderer').createRenderer();
 
-// Create an express server
-var express = require('express')
-var server = express()
+// Создаём Express-сервер
+var express = require('express');
+var server = express();
 
-// Serve files from the assets directory
+// Включаем отдачу статических файлов из директории assets
 server.use('/assets', express.static(
   path.resolve(__dirname, 'assets')
-))
+));
 
-// Handle all GET requests
+// Обрабатываем все GET-запросы
 server.get('*', function (request, response) {
-  // Render our Vue app to a string
+  // Рендерим наше приложение в строку
   renderer.renderToString(
-    // Create an app instance
+    // Создаём экземпляр приложения
     require('./assets/app')(),
-    // Handle the rendered result
+
+    // Обрабатываем результат рендеринга
     function (error, html) {
-      // If an error occurred while rendering...
+
+      // Если при рендеринге произошла ошибка...
       if (error) {
-        // Log the error in the console
-        console.error(error)
-        // Tell the client something went wrong
+        // Логируем её в консоль
+        console.error(error);
+        // И говорим клиенту, что что-то пошло не так
         return response
           .status(500)
-          .send('Server Error')
+          .send('Server Error');
       }
-      // Send the layout with the rendered app's HTML
-      response.send(layout.replace('<div id="app"></div>', html))
+
+      // Отсылаем HTML-шаблон, в который вставлен результат рендеринга приложения
+      response.send(layout.replace('<div id="app"></div>', html));
     }
   )
 })
 
-// Listen on port 5000
+// Слушаем 5000-й порт
 server.listen(5000, function (error) {
-  if (error) throw error
-  console.log('Server is running at localhost:5000')
+  if (error) throw error;
+  console.log('Server is running at localhost:5000');
 })

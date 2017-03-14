@@ -1,15 +1,15 @@
-> The simplest possible Vue 2.0 SSR demo, using only ES5 with no build step.
+# Использование
 
-## Usage
-
-``` sh
-npm install # install dependencies
-```
+1. Устанавливаем зависимости:
 
 ``` sh
-npm run dev # run server in development
+npm install
 ```
 
+2. Запускаем сервер:
+
 ``` sh
-npm run prod # run server in production
+npm run serve
 ```
+
+3. Открываем в браузере http://localhost:5000
